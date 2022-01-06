@@ -1,0 +1,46 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Create new homepage banner",
+      "details": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam atque possimus soluta tempora magni nihil a facere porro obcaecati totam!",
+      "complete": true
+    },
+    {
+      "id": 2,
+      "title": "Make marketing email",
+      "details": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, iste? Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, iste?",
+      "complete": false
+    },
+    {
+      "id": 3,
+      "title": "Prepare the troops",
+      "details": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam atque possimus soluta tempora magni nihil a facere porro obcaecati totam!",
+      "complete": false
+    },
+    {
+      "id": 4,
+      "title": "Build the Empire",
+      "details": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam atque possimus soluta tempora magni nihil a facere porro obcaecati totam!",
+      "complete": false
+    },
+    {
+      "id": 5,
+      "title": "Destroy the death star and the Empire",
+      "details": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam atque possimus soluta tempora magni nihil a facere porro obcaecati totam!",
+      "complete": true
+    },
+    {
+      "title": "Make a new website",
+      "details": "bla bla bla",
+      "complete": true,
+      "id": 6
+    },
+    {
+      "title": "Blow the death star and the empire",
+      "details": "Get weapons and troops first",
+      "complete": true,
+      "id": 7
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Welcome to the new blog",
+      "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam non a repellendus assumenda doloribus omnis beatae perferendis aspernatur pariatur. Ex aliquid id atque illum velit voluptatibus pariatur. Nihil ab, deserunt ullam, beatae amet obcaecati consequuntur cumque pariatur minus quo eius nesciunt sequi asperiores nostrum numquam? Earum, repellat? Animi aliquam officia aut dicta inventore? Quaerat ipsam, dolorem excepturi veritatis eaque aperiam iste est fuga quae consectetur asperiores corrupti obcaecati quia doloremque non a, dolorum odio omnis. Unde hic molestias sed perspiciatis maxime quaerat excepturi commodi. Tempora est, nemo temporibus recusandae maiores commodi ut dolor dolores possimus numquam necessitatibus assumenda, quas rem.",
+      "tags": [
+        "webdev",
+        "coding",
+        "news"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Top 5 CSS tips",
+      "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam non a repellendus assumenda doloribus omnis beatae perferendis aspernatur pariatur. Ex aliquid id atque illum velit voluptatibus pariatur. Nihil ab, deserunt ullam, beatae amet obcaecati consequuntur cumque pariatur minus quo eius nesciunt sequi asperiores nostrum numquam? Earum, repellat? Animi aliquam officia aut dicta inventore? Quaerat ipsam, dolorem excepturi veritatis eaque aperiam iste est fuga quae consectetur asperiores corrupti obcaecati quia doloremque non a, dolorum odio omnis. Unde hic molestias sed perspiciatis maxime quaerat excepturi commodi. Tempora est, nemo temporibus recusandae maiores commodi ut dolor dolores possimus numquam necessitatibus assumenda, quas rem.",
+      "tags": [
+        "webdev",
+        "coding",
+        "css"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Intro to Vuex",
+      "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam non a repellendus assumenda doloribus omnis beatae perferendis aspernatur pariatur. Ex aliquid id atque illum velit voluptatibus pariatur. Nihil ab, deserunt ullam, beatae amet obcaecati consequuntur cumque pariatur minus quo eius nesciunt sequi asperiores nostrum numquam? Earum, repellat? Animi aliquam officia aut dicta inventore? Quaerat ipsam, dolorem excepturi veritatis eaque aperiam iste est fuga quae consectetur asperiores corrupti obcaecati quia doloremque non a, dolorum odio omnis. Unde hic molestias sed perspiciatis maxime quaerat excepturi commodi. Tempora est, nemo temporibus recusandae maiores commodi ut dolor dolores possimus numquam necessitatibus assumenda, quas rem.",
+      "tags": [
+        "webdev",
+        "coding",
+        "vue",
+        "vuex"
+      ]
+    },
+    {
+      "title": "Angular and Vue",
+      "body": "I just wanted to let you know that I've now added a new chapter near the end of the course all about using Vue 3 with Firebase 9. Version 9 of Firebase adopts a more modular & functional approach, which takes advantage of something called \"tree-shaking\". This means that any unused Firebase code is \"shaken\" out of our final production bundles, leading to a better performance.",
+      "tags": [
+        "angular",
+        "vue",
+        "js"
+      ],
+      "id": 4
+    },
+    {
+      "title": "Something here",
+      "body": "another body",
+      "tags": [
+        "something"
+      ],
+      "id": 5
+    },
+    {
+      "title": "Java como programar",
+      "body": "body",
+      "tags": [
+        "java"
+      ],
+      "id": 6
+    }
+  ]
+}
