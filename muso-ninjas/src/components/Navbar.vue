@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white p-4 shadow-sm">
+  <div class="bg-white px-4 py-6 shadow-sm">
     <nav class="flex justify-between items-center mx-auto max-w-7xl">
       <h1
         class="flex items-center space-x-3 text-2xl uppercase tracking-widest"

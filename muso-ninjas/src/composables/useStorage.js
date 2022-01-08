@@ -20,14 +20,25 @@ const useStorage = () => {
       console.log('upload result:', res);
       url.value = await res.ref.getDownloadURL();
     } catch (e) {
-      console.error('ERROR: ', e.message);
+      console.error('ERROR UPLOADING:', e.message);
       error.value = e.message;
     } finally {
       isPending.value = false;
     }
   };
 
-  return { url, filePath, isPending, error, uploadImage };
+  const deleteImage = async (path) => {
+    isPending.value = true;
+    const storageRef = projectStorage.ref(path);
+    try {
+      await storageRef.delete();
+    } catch (err) {
+      console.log('ERROR DELETING FILE:', err.message);
+      error.value = err.message;
+    }
+  }
+
+  return { url, filePath, isPending, error, uploadImage, deleteImage };
 }
 
 export default useStorage;
