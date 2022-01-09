@@ -24,6 +24,11 @@
       <div class="space-x-4">
         <div v-if="user" class="flex items-center space-x-4">
           <router-link
+            :to="{ name: 'UserPlaylists' }"
+            class="flex items-center space-x-2 mr-3 font-semibold"
+            >{{ user.displayName }}, my playlists</router-link
+          >
+          <router-link
             :to="{ name: 'CreatePlaylist' }"
             class="flex items-center space-x-2 font-semibold"
           >
