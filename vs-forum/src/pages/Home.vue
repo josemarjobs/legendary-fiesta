@@ -3,18 +3,18 @@
     <h1 class="text-3xl font-bold text-center mb-4 mt-10">
       Welcome to the Forum
     </h1>
-    <thread-list :threads="threads" />
+    <category-list :categories="categories" />
   </div>
 </template>
 
 <script>
 import sourceData from "../data.json";
-import ThreadList from "./ThreadList.vue";
+import CategoryList from "../components/CategoryList.vue";
 export default {
-  components: { ThreadList },
+  components: { CategoryList },
   data() {
     return {
-      threads: sourceData.threads,
+      categories: sourceData.categories,
     };
   },
 };

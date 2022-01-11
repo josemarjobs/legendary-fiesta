@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full md:max-w-4xl lg:max-w-5xl mx-auto">
+  <div class="w-full md:max-w-4xl lg:max-w-5xl mx-auto text-gray-600">
     <router-view />
   </div>
 </template>

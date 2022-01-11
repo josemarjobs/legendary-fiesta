@@ -1,24 +1,68 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import PageHome from '../components/PageHome.vue'
-import PageThread from '../components/PageThread.vue'
-import PageNotFound from '../components/PageNotFound.vue'
+import Home from '../pages/Home.vue'
+import ThreadShow from '../pages/ThreadShow.vue'
+import NotFound from '../pages/NotFound.vue'
+import Forum from '../pages/Forum.vue'
+import Category from '../pages/Category.vue'
 
+import sourceData from '../data.json';
 
 const routes = [
   {
     path: '/',
-    component: PageHome,
+    component: Home,
     name: 'PageHome',
-  }, {
+  },
+  {
     path: '/thread/:id',
     props: true,
-    component: PageThread,
+    component: ThreadShow,
     name: 'ThreadShow',
-  }, {
+    beforeEnter(to, from, next) {
+      const threadExists = sourceData.threads.find(t => t.id === to.params.id);
+      if (threadExists) {
+        return next();
+      } else {
+        next({
+          name: 'NotFound',
+          params: { pathMatch: to.path.substring(1).split('/') },
+          query: to.query,
+          hash: to.hash,
+        });
+      }
+    }
+  },
+  {
+    path: '/category/:id',
+    props: true,
+    name: 'Category',
+    component: Category,
+  },
+  {
+    path: '/forum/:id',
+    props: true,
+    component: Forum,
+    name: 'ForumShow',
+    beforeEnter(to, from, next) {
+      // const threadExists = sourceData.threads.find(t => t.id === to.params.id);
+      // if (threadExists) {
+      //   return next();
+      // } else {
+      //   next({
+      //     name: 'NotFound',
+      //     params: { pathMatch: to.path.substring(1).split('/') },
+      //     query: to.query,
+      //     hash: to.hash,
+      //   });
+      // }
+      next();
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: PageNotFound,
+    component: NotFound,
   }
 ];
 

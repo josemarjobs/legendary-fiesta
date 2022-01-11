@@ -27,7 +27,7 @@
           <a class="text-green-500" href="#">{{
             userById(thread.userId).name
           }}</a
-          >, {{ thread.publishedAt }}
+          >, <app-date :timestamp="thread.publishedAt" />
         </p>
       </div>
 
@@ -47,7 +47,9 @@
                 userById(thread.userId).name
               }}</a>
             </p>
-            <p class="text-xs">{{ thread.publishedAt }}</p>
+            <p class="text-xs">
+              <app-date :timestamp="thread.publishedAt" />
+            </p>
           </div>
         </div>
       </div>
@@ -59,6 +61,7 @@
 import sourceData from "../data.json";
 
 export default {
+  name: "ThreadList",
   props: {
     threads: {
       type: Array,
