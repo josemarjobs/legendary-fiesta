@@ -7,9 +7,13 @@
           <p class="text-2xl font-light">
             {{ forum.description }}
           </p>
-          <a href="#" class="bg-green-500 text-white px-3 py-1 rounded-md"
-            >Start a thread</a
+          <router-link
+            :to="{ name: 'ThreadCreate', params: { forumId: forum.id } }"
+            href="#"
+            class="bg-green-500 text-white px-3 py-1 rounded-md"
           >
+            Start a thread
+          </router-link>
         </div>
       </div>
     </div>
@@ -19,7 +23,6 @@
 
 <script>
 import ThreadList from "../components/ThreadList.vue";
-import sourceData from "../data.json";
 
 export default {
   components: { ThreadList },
@@ -31,10 +34,10 @@ export default {
   },
   computed: {
     forum() {
-      return sourceData.forums.find((f) => f.id === this.id);
+      return this.$store.state.forums.find((f) => f.id === this.id);
     },
     threads() {
-      return sourceData.threads.filter((t) => t.forumId === this.id);
+      return this.$store.state.threads.filter((t) => t.forumId === this.id);
     },
   },
 };

@@ -13,7 +13,6 @@
 <script>
 import PostEditor from "../components/PostEditor.vue";
 import PostList from "../components/PostList.vue";
-import sourceData from "../data.json";
 export default {
   name: "ThreadShow",
   components: { PostList, PostEditor },
@@ -25,12 +24,16 @@ export default {
   },
   data() {
     return {
-      threads: sourceData.threads,
-      posts: sourceData.posts,
       newPostText: "",
     };
   },
   computed: {
+    threads() {
+      return this.$store.state.threads;
+    },
+    posts() {
+      return this.$store.state.posts;
+    },
     thread() {
       return this.threads.find((t) => t.id === this.id);
     },
@@ -40,8 +43,11 @@ export default {
   },
   methods: {
     addPost(eventData) {
-      this.posts.push({ ...eventData.post, threadId: this.id });
-      this.thread.posts.push(eventData.post.id);
+      const post = {
+        ...eventData.post,
+        threadId: this.id,
+      };
+      this.$store.dispatch("createPost", post);
     },
   },
 };

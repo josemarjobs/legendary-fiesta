@@ -1,7 +1,7 @@
 <template>
   <div class="posts space-y-6">
     <div
-      class="bg-white rounded-sm shadow-sm p-4 flex space-x-5"
+      class="bg-white rounded-sm shadow-sm p-4 flex space-x-5 items-start"
       v-for="post in posts"
       :key="post.id"
     >
@@ -32,7 +32,7 @@
 
       <div class="flex flex-col w-full flex-1">
         <div class="post-content">
-          <p>{{ post.text }}</p>
+          <p class="break-all">{{ post.text }}</p>
         </div>
 
         <div class="post-date self-end text-sm text-gray-400 mt-4">
@@ -44,8 +44,6 @@
 </template>
 
 <script>
-import sourceData from "../data.json";
-
 export default {
   name: "PostList",
   props: {
@@ -54,11 +52,13 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      threads: sourceData.threads,
-      users: sourceData.users,
-    };
+  computed: {
+    threads() {
+      return this.$store.state.threads;
+    },
+    users() {
+      return this.$store.state.users;
+    },
   },
   methods: {
     userById(userId) {

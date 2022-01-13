@@ -12,7 +12,6 @@
 
 <script>
 import ForumList from "./ForumList.vue";
-import sourceData from "../data.json";
 export default {
   components: { ForumList },
   props: {
@@ -23,7 +22,9 @@ export default {
   },
   methods: {
     getForumsForCategory(category) {
-      return sourceData.forums.filter((f) => f.categoryId === category.id);
+      return this.$store.state.forums.filter(
+        (f) => f.categoryId === category.id
+      );
     },
   },
 };

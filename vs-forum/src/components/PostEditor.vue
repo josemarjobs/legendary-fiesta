@@ -24,13 +24,8 @@ export default {
   },
   methods: {
     save() {
-      const postId = "ggg" + Math.random();
       const post = {
-        id: postId,
         text: this.text,
-        publishedAt: Math.floor(Date.now() / 1000),
-        // threadId: this.id,
-        userId: "u4r8XCziZEWEXsj2UIKNHBoDh0n2",
       };
       this.$emit("save", { post });
       this.text = "";
