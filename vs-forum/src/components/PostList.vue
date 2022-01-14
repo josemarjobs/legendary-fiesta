@@ -27,7 +27,18 @@
           />
         </a>
 
-        <p class="text-xs font-semibold">107 posts</p>
+        <p
+          class="
+            text-xs
+            font-semibold
+            flex flex-col
+            items-center
+            justify-center
+          "
+        >
+          <span>{{ userById(post.userId).postsCount }} posts</span>
+          <span>{{ userById(post.userId).threadsCount }} threads</span>
+        </p>
       </div>
 
       <div class="flex flex-col w-full flex-1">
@@ -44,7 +55,6 @@
 </template>
 
 <script>
-import { findById } from "../helpers";
 export default {
   name: "PostList",
   props: {
@@ -63,7 +73,7 @@ export default {
   },
   methods: {
     userById(userId) {
-      return findById(this.users, userId);
+      return this.$store.getters.user(userId);
     },
   },
 };

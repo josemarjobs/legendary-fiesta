@@ -32,7 +32,7 @@
       </div>
 
       <div class="activity flex items-center">
-        <p class="replies-count">{{ thread.posts.length }} replies</p>
+        <p class="replies-count">{{ thread.repliesCount }} replies</p>
 
         <div class="w-80 flex items-center justify-center space-x-2">
           <img

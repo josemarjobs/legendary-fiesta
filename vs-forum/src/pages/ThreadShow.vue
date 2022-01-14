@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <h1 class="text-3xl text-center font-bold my-10">
+    <h1 class="text-3xl font-bold mt-10 mb-1">
       {{ thread.title }}
       <router-link
         class="
@@ -15,7 +15,18 @@
         >Edit</router-link
       >
     </h1>
+    <div class="flex justify-between items-end mb-6">
+      <div>
+        By
+        <a class="hover:text-emerald-500" href="#"> {{ thread.author.name }} </a
+        >, <app-date :timestamp="thread.publishedAt" />.
+      </div>
 
+      <div class="text-sm text-gray-400">
+        {{ thread.repliesCount }} replies by
+        {{ thread.contributorsCount }} contributors
+      </div>
+    </div>
     <post-list :posts="threadPosts" />
 
     <post-editor @save="addPost" />
@@ -23,11 +34,12 @@
 </template>
 
 <script>
+import AppDate from "../components/AppDate.vue";
 import PostEditor from "../components/PostEditor.vue";
 import PostList from "../components/PostList.vue";
 export default {
   name: "ThreadShow",
-  components: { PostList, PostEditor },
+  components: { PostList, PostEditor, AppDate },
   props: {
     id: {
       required: true,
@@ -47,7 +59,7 @@ export default {
       return this.$store.state.posts;
     },
     thread() {
-      return this.threads.find((t) => t.id === this.id);
+      return this.$store.getters.thread(this.id);
     },
     threadPosts() {
       return this.posts.filter((p) => p.threadId === this.id);

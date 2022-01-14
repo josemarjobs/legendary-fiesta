@@ -10,23 +10,45 @@ export default createStore({
     // authId: 'ALXhxjwgY9PinwNGHpfai6OWyDu2'
   },
   getters: {
-    authUser: state => {
-      const user = findById(state.users, state.authId);
-      if (!user) return null;
-      return {
-        ...user,
-        get posts() {
-          return state.posts.filter((p) => p.userId === user.id);
-        },
-        get postsCount() {
-          return this.posts.length || 0;
-        },
-        get threads() {
-          return state.threads.filter((t) => t.userId === user.id);
-        },
-        get threadsCount() {
-          return this.threads.length || 0;
-        },
+    authUser: (state, getters) => {
+      return getters.user(state.authId);
+    },
+    user: state => {
+      return (id) => {
+        const user = findById(state.users, id);
+        if (!user) return null;
+        return {
+          ...user,
+          get posts() {
+            return state.posts.filter((p) => p.userId === user.id);
+          },
+          get postsCount() {
+            return this.posts.length || 0;
+          },
+          get threads() {
+            return state.threads.filter((t) => t.userId === user.id);
+          },
+          get threadsCount() {
+            return this.threads.length || 0;
+          },
+        }
+      }
+    },
+    thread: state => {
+      return (id) => {
+        const thread = findById(state.threads, id);
+        return {
+          ...thread,
+          get author() {
+            return findById(state.users, thread.userId)
+          },
+          get repliesCount() {
+            return thread.posts.length - 1;
+          },
+          get contributorsCount() {
+            return thread.contributors?.length || 0;
+          },
+        }
       }
     }
   },
@@ -37,7 +59,8 @@ export default createStore({
       post.publishedAt = Math.floor(Date.now() / 1000);
 
       commit('setPost', { post });
-      commit('appendPostToThread', { postId: post.id, threadId: post.threadId });
+      commit('appendPostToThread', { parentId: post.threadId, childId: post.id });
+      commit('appendContributorToThread', { parentId: post.threadId, childId: state.authId });
     },
     async createThread({ commit, state, dispatch }, { text, title, forumId }) {
       const id = "ggg" + Math.random();
@@ -46,8 +69,8 @@ export default createStore({
       const thread = { forumId, title, publishedAt, userId, id };
 
       commit('setThread', { thread });
-      commit('appendThreadToUser', { userId, threadId: id });
-      commit('appendThreadToForum', { forumId, threadId: id });
+      commit('appendThreadToUser', { parentId: userId, childId: id });
+      commit('appendThreadToForum', { parentId: forumId, childId: id });
 
       dispatch('createPost', { text, threadId: id });
 
@@ -83,22 +106,23 @@ export default createStore({
       state.users[userIndex] = user;
     },
 
-    appendPostToThread(state, { postId, threadId }) {
-      const thread = findById(state.threads, threadId);
-      thread.posts = thread.posts || [];
-      thread.posts.push(postId);
-    },
+    appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
 
-    appendThreadToForum(state, { threadId, forumId }) {
-      const forum = findById(state.forums, forumId);
-      forum.threads = forum.threads || [];
-      forum.threads.push(threadId);
-    },
+    appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threadss' }),
 
-    appendThreadToUser(state, { threadId, userId }) {
-      const user = findById(state.users, userId);
-      user.threads = user.threads || [];
-      user.threads.push(threadId);
-    }
+    appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' }),
+
+    appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' }),
   }
 });
+
+function makeAppendChildToParentMutation({ parent, child }) {
+  return (state, { childId, parentId }) => {
+    const resource = findById(state[parent], parentId);
+    resource[child] = resource[child] || [];
+
+    if (!resource[child].includes(childId)) {
+      resource[child].push(childId);
+    }
+  }
+}
