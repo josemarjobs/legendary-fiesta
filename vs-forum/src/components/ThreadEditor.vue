@@ -5,16 +5,15 @@
       <input
         class="border border-gray-300 py-2 px-3 rounded-md"
         type="text"
-        v-model="title"
+        v-model="forum.title"
       />
     </div>
     <div class="flex flex-col">
       <label>Content</label>
       <textarea
         class="border border-gray-300 py-2 px-3 rounded-md"
-        type="text"
         rows="5"
-        v-model="text"
+        v-model="forum.text"
       ></textarea>
     </div>
     <div class="flex justify-between items-center pt-2">
@@ -42,7 +41,8 @@
           hover:bg-emerald-800
         "
       >
-        Publish
+        <span v-if="existing">Update</span>
+        <span v-else>Publish</span>
       </button>
     </div>
   </form>
@@ -50,15 +50,26 @@
 
 <script>
 export default {
+  props: {
+    title: { type: String, default: "" },
+    text: { type: String, default: "" },
+  },
   data() {
     return {
-      title: "",
-      text: "",
+      forum: {
+        title: this.title,
+        text: this.text,
+      },
     };
+  },
+  computed: {
+    existing() {
+      return !!this.title;
+    },
   },
   methods: {
     save() {
-      this.$emit("save", { title: this.title, text: this.text });
+      this.$emit("save", { ...this.forum });
     },
     cancel() {
       this.$emit("cancel");

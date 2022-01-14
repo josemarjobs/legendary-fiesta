@@ -2,6 +2,18 @@
   <div class="">
     <h1 class="text-3xl text-center font-bold my-10">
       {{ thread.title }}
+      <router-link
+        class="
+          text-sm
+          px-4
+          text-emerald-500
+          uppercase
+          tracking-widest
+          hover:text-emerald-700
+        "
+        :to="{ name: 'ThreadEdit', params: { id: thread.id } }"
+        >Edit</router-link
+      >
     </h1>
 
     <post-list :posts="threadPosts" />
