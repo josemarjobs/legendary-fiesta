@@ -5,6 +5,11 @@ import store from './store'
 
 import './assets/tailwind.css'
 
+import { initializeApp } from "firebase/app";
+import firebaseConfig from './config/firebase';
+
+const firebaseApp = initializeApp(firebaseConfig);
+
 const forumApp = createApp(App);
 forumApp.use(router);
 forumApp.use(store);
