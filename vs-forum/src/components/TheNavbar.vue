@@ -63,7 +63,7 @@
         Threads
       </router-link>
     </div>
-    <div class="">
+    <div class="" v-if="authUser">
       <router-link
         :to="{ name: 'Profile' }"
         class="flex items-center hover:text-emerald-200"

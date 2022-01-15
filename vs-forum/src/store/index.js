@@ -1,10 +1,14 @@
 import { createStore } from "vuex";
-import sourceData from "../data.json";
 import { findById, upsert } from "../helpers";
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
 
 export default createStore({
   state: {
-    ...sourceData,
+    categories: [],
+    forums: [],
+    threads: [],
+    posts: [],
+    users: [],
     // authId: 'rpbB8C6ifrYmNDufMERWfQUoa202'
     authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
     // authId: 'ALXhxjwgY9PinwNGHpfai6OWyDu2'
@@ -58,7 +62,7 @@ export default createStore({
       post.userId = state.authId;
       post.publishedAt = Math.floor(Date.now() / 1000);
 
-      commit('setPost', { post });
+      commit('setItem', { resource: 'posts', item: post });
       commit('appendPostToThread', { parentId: post.threadId, childId: post.id });
       commit('appendContributorToThread', { parentId: post.threadId, childId: state.authId });
     },
@@ -68,7 +72,7 @@ export default createStore({
       const publishedAt = Math.floor(Date.now() / 1000);
       const thread = { forumId, title, publishedAt, userId, id };
 
-      commit('setThread', { thread });
+      commit('setItem', { resource: 'threads', item: thread });
       commit('appendThreadToUser', { parentId: userId, childId: id });
       commit('appendThreadToForum', { parentId: forumId, childId: id });
 
@@ -83,27 +87,40 @@ export default createStore({
       const newThread = { ...thread, title };
       const newPost = { ...post, text };
 
-      commit('setThread', { thread: newThread });
-      commit('setPost', { post: newPost });
+      commit('setItem', { resource: 'threads', item: newThread });
+      commit('setItem', { resource: 'posts', item: newPost });
 
       return thread;
     },
+
     updateUser({ commit }, user) {
-      commit('setUser', { user, userId: user.id })
+      commit('setItem', { resource: "users", item: user });
+    },
+
+    fetchThread({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'threads', id });
+    },
+
+    fetchUser({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'users', id });
+    },
+
+    fetchPost({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'posts', id });
+    },
+
+    async fetchItem({ commit }, { resource, id }) {
+      console.log('fetching', resource, id);
+      const itemRef = await getDoc(doc(getFirestore(), resource, id));
+      const item = { ...itemRef.data(), id: itemRef.id };
+
+      commit("setItem", { resource, id, item });
+      return item;
     }
   },
   mutations: {
-    setPost(state, { post }) {
-      upsert(state.posts, post);
-    },
-
-    setThread(state, { thread }) {
-      upsert(state.threads, thread);
-    },
-
-    setUser(state, { user, userId }) {
-      const userIndex = state.users.findIndex(u => u.id === userId);
-      state.users[userIndex] = user;
+    setItem(state, { resource, item }) {
+      upsert(state[resource], item);
     },
 
     appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),

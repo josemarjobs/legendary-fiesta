@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="" v-if="thread">
     <h1 class="text-3xl font-bold mt-10 mb-1">
       {{ thread.title }}
       <router-link
@@ -18,7 +18,8 @@
     <div class="flex justify-between items-end mb-6">
       <div>
         By
-        <a class="hover:text-emerald-500" href="#"> {{ thread.author.name }} </a
+        <a class="hover:text-emerald-500" href="#">
+          {{ thread.author?.name }} </a
         >, <app-date :timestamp="thread.publishedAt" />.
       </div>
 
@@ -37,6 +38,7 @@
 import AppDate from "../components/AppDate.vue";
 import PostEditor from "../components/PostEditor.vue";
 import PostList from "../components/PostList.vue";
+
 export default {
   name: "ThreadShow",
   components: { PostList, PostEditor, AppDate },
@@ -73,6 +75,17 @@ export default {
       };
       this.$store.dispatch("createPost", post);
     },
+  },
+
+  async created() {
+    const thread = await this.$store.dispatch("fetchThread", { id: this.id });
+
+    this.$store.dispatch("fetchUser", { id: thread.userId });
+
+    thread.posts.forEach(async (postId) => {
+      const post = await this.$store.dispatch("fetchPost", { id: postId });
+      this.$store.dispatch("fetchUser", { id: post.userId });
+    });
   },
 };
 </script>

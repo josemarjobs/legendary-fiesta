@@ -6,6 +6,8 @@
       :key="post.id"
     >
       <div
+        v-if="userById(post.userId)"
+        id="user-indo"
         class="
           w-28
           user-info

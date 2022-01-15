@@ -9,6 +9,7 @@
       md:gap-x-4
       mt-8
     "
+    v-if="user"
   >
     <div class="profile-card md:col-span-2">
       <user-profile-card v-if="!edit" :user="user" />
