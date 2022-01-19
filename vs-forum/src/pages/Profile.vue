@@ -27,10 +27,10 @@
           border-b-1 border-b border-gray-200
         "
       >
-        <span class="text-3xl font-light"
+        <span class="text-xl font-light"
           >{{ user.name }}'s recent activity</span
         >
-        <a class="text-green-500 hover:text-green-700" href="#"
+        <a class="text-green-500 text-sm hover:text-green-700" href="#"
           >See only started threads?</a
         >
       </div>

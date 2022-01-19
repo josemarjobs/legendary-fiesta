@@ -1,38 +1,38 @@
 <template>
-  <div class="home">
+  <div class="home" v-if="asyncDataStatus_ready">
     <h1 class="text-3xl font-bold text-center mb-4 mt-10">
       Welcome to the Forum
     </h1>
     <category-list :categories="categories" />
   </div>
+  <div class="h-screen flex items-center justify-center" v-else>
+    <h1 class="text-center text-2xl">Loading...</h1>
+  </div>
 </template>
 
 <script>
 import CategoryList from "../components/CategoryList.vue";
+import asyncDataStatus from "../mixin/asyncDataStatus";
+
+import { mapActions } from "vuex";
+
 export default {
   components: { CategoryList },
-  data() {
-    return {
-      categories: this.$store.state.categories,
-    };
+  mixins: [asyncDataStatus],
+
+  computed: {
+    categories() {
+      return this.$store.state.categories;
+    },
   },
-  beforeCreate() {
-    console.log("before create", this.categories);
+  methods: {
+    ...mapActions(["fetchAllCategories", "fetchForums"]),
   },
-  created() {
-    console.log("created: good for api calls", this.categories);
-  },
-  beforeMount() {
-    console.log("beforeMount", this.categories);
-  },
-  mounted() {
-    console.log("mounted", this.categories, this.$el);
-  },
-  beforeUnmount() {
-    console.log("beforeUnmount", this.categories, this.$el);
-  },
-  unmounted() {
-    console.log("Unmounted", this.categories, this.$el);
+  async created() {
+    const categories = await this.fetchAllCategories();
+    const forumIds = categories.map((c) => c.forums).flat();
+    await this.fetchForums({ ids: forumIds });
+    this.asyncDataStatus_fetched();
   },
 };
 </script>

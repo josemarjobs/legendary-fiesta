@@ -1,5 +1,5 @@
 <template>
-  <div class="create-thread p-8 md:px-0">
+  <div class="create-thread p-8 md:px-0" v-if="forum && asyncDataStatus_ready">
     <h1 class="text-3xl font-light mb-8">
       Create a new thread in
       <span class="italic font-medium">{{ forum.name }}</span>
@@ -10,9 +10,12 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import ThreadEditor from "../components/ThreadEditor.vue";
+import asyncDataStatus from "../mixin/asyncDataStatus";
 export default {
   components: { ThreadEditor },
+  mixins: [asyncDataStatus],
   props: {
     forumId: {
       type: String,
@@ -25,8 +28,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["createThread", "fetchForum"]),
     async save({ title, text }) {
-      const thread = await this.$store.dispatch("createThread", {
+      const thread = await this.createThread({
         forumId: this.forum.id,
         text,
         title,
@@ -37,6 +41,11 @@ export default {
     cancel() {
       this.$router.push({ name: "ForumShow", params: { id: this.forum.id } });
     },
+  },
+
+  async created() {
+    await this.fetchForum({ id: this.forumId });
+    this.asyncDataStatus_fetched();
   },
 };
 </script>

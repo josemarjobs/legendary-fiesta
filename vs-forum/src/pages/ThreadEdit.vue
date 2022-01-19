@@ -1,5 +1,5 @@
 <template>
-  <div class="create-thread p-8 md:px-0">
+  <div class="create-thread p-8 md:px-0" v-if="thread && asyncDataStatus_ready">
     <h1 class="text-3xl font-light mb-8">
       Editing in
       <span class="italic font-medium">{{ thread.title }}</span>
@@ -15,9 +15,13 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import ThreadEditor from "../components/ThreadEditor.vue";
+import { findById } from "../helpers";
+import asyncDataStatus from "../mixin/asyncDataStatus";
 export default {
   components: { ThreadEditor },
+  mixins: [asyncDataStatus],
   props: {
     id: {
       type: String,
@@ -26,16 +30,19 @@ export default {
   },
   computed: {
     thread() {
-      return this.$store.state.threads.find((f) => f.id === this.id);
+      return findById(this.$store.state.threads, this.id);
     },
     text() {
-      return this.$store.state.posts.find((p) => p.id === this.thread.posts[0])
-        .text;
+      const post = this.thread
+        ? findById(this.$store.state.posts, this.thread.posts[0])
+        : null;
+      return post ? post.text : null;
     },
   },
   methods: {
+    ...mapActions(["updateThread", "fetchThread", "fetchPost"]),
     async save({ title, text }) {
-      const thread = await this.$store.dispatch("updateThread", {
+      const thread = await this.updateThread({
         id: this.id,
         text,
         title,
@@ -46,6 +53,11 @@ export default {
     cancel() {
       this.$router.push({ name: "ThreadShow", params: { id: this.id } });
     },
+  },
+  async created() {
+    const thread = await this.fetchThread({ id: this.id });
+    await this.fetchPost({ id: thread.posts[0] });
+    this.asyncDataStatus_fetched();
   },
 };
 </script>

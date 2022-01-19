@@ -16,7 +16,7 @@
       v-for="thread in threads"
       :key="thread.id"
     >
-      <div>
+      <div v-if="thread">
         <p class="text-green-500">
           <router-link :to="{ name: 'ThreadShow', params: { id: thread.id } }">
             {{ thread.title }}
@@ -80,7 +80,7 @@ export default {
       return findById(this.posts, postId);
     },
     userById(userId) {
-      return findById(this.users, userId);
+      return findById(this.users, userId) || {};
     },
   },
 };

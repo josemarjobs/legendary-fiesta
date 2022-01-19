@@ -71,7 +71,7 @@
         <img
           class="w-10 h-10 object-cover object-center rounded-full mr-4"
           :src="authUser.avatar"
-          :alt="`${authUser.name} profile picture`"
+          :alt="authUser.name"
         />
         <span>{{ authUser.name }}</span>
         <svg
