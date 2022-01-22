@@ -6,9 +6,17 @@ import store from './store'
 import './assets/tailwind.css'
 
 import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebaseConfig from './config/firebase';
 
 initializeApp(firebaseConfig);
+onAuthStateChanged(getAuth(), (user) => {
+  store.dispatch('unsubscribeAuthUserSnapshot');
+  if (user) {
+    store.dispatch('fetchAuthUser')
+  }
+  store.dispatch('authIsReady')
+});
 
 const forumApp = createApp(App);
 forumApp.use(router);

@@ -28,6 +28,7 @@ export default {
     ...mapActions(["fetchAuthUser"]),
     onPageReady() {
       this.showPage = true;
+      this.fetchAuthUser();
       NProgress.done();
     },
   },

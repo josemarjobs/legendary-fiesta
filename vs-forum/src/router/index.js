@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
 
 import Home from '../pages/Home.vue'
+import Register from '../pages/Register.vue'
+import Login from '../pages/Login.vue'
 import ThreadShow from '../pages/ThreadShow.vue'
 import ThreadCreate from '../pages/ThreadCreate.vue'
 import ThreadEdit from '../pages/ThreadEdit.vue'
@@ -15,6 +17,16 @@ const routes = [
     path: '/',
     component: Home,
     name: 'PageHome',
+  },
+  {
+    path: '/register',
+    component: Register,
+    name: 'Register',
+  },
+  {
+    path: '/login',
+    component: Login,
+    name: 'Login',
   },
   {
     path: '/me',

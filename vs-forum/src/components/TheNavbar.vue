@@ -63,9 +63,40 @@
         Threads
       </router-link>
     </div>
-    <div class="" v-if="authUser">
-      <router-link
-        :to="{ name: 'Profile' }"
+    <div class="flex items-center relative" v-if="authUser && authIsReady">
+      <div
+        v-show="menuActive"
+        class="
+          transition-all
+          popup
+          absolute
+          top-12
+          right-0
+          py-4
+          px-6
+          space-y-2
+          bg-white
+          flex flex-col
+        "
+      >
+        <router-link
+          @click="menuActive = !menuActive"
+          :to="{ name: 'Profile' }"
+          class="text-emerald-600 transition hover:text-emerald-400"
+        >
+          View Profile
+        </router-link>
+        <a
+          href="#"
+          class="text-emerald-600 transition hover:text-emerald-400"
+          @click.prevent="signOut"
+        >
+          Sign out
+        </a>
+      </div>
+      <a
+        href="#"
+        @click.prevent="menuActive = !menuActive"
         class="flex items-center hover:text-emerald-200"
       >
         <img
@@ -75,6 +106,20 @@
         />
         <span>{{ authUser.name }}</span>
         <svg
+          v-if="menuActive"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 ml-1 mt-1"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <svg
+          v-else
           xmlns="http://www.w3.org/2000/svg"
           class="h-5 w-5 ml-1 mt-1"
           viewBox="0 0 20 20"
@@ -86,6 +131,20 @@
             clip-rule="evenodd"
           />
         </svg>
+      </a>
+    </div>
+    <div v-if="!authUser && authIsReady">
+      <router-link
+        :to="{ name: 'Login' }"
+        class="ml-8 px-4 py-2 bg-emerald-900 rounded-md"
+      >
+        Login
+      </router-link>
+      <router-link
+        :to="{ name: 'Register' }"
+        class="ml-8 px-4 py-2 bg-emerald-900 rounded-md"
+      >
+        Register
       </router-link>
     </div>
   </div>
@@ -94,8 +153,20 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
+  data() {
+    return {
+      menuActive: false,
+    };
+  },
   computed: {
-    ...mapGetters(["authUser"]),
+    ...mapGetters(["authUser", "authIsReady"]),
+  },
+  methods: {
+    signOut() {
+      this.menuActive = false;
+      this.$store.dispatch("signOut");
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>

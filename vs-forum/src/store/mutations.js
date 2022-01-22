@@ -4,6 +4,12 @@ export default {
   setItem(state, { resource, item }) {
     upsert(state[resource], docToResource(item));
   },
+  setAuthId(state, authId) {
+    state.authId = authId;
+  },
+  setAuthIsReady(state, authIsReady) {
+    state.authIsReady = authIsReady;
+  },
 
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
 
@@ -13,6 +19,9 @@ export default {
 
   appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' }),
 
+  setAuthUserUnsubscribe(state, unsubscribe) {
+    state.authUserUnsubscribe = unsubscribe;
+  },
   appendUnsubscribe(state, { unsubscribe }) {
     state.unsubscribes.push(unsubscribe);
   },

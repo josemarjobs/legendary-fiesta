@@ -1,4 +1,6 @@
-import { serverTimestamp, writeBatch, increment, arrayUnion, updateDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot } from "firebase/firestore";
+import { serverTimestamp, writeBatch, increment, arrayUnion, updateDoc, setDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
 import { findById, docToResource } from "../helpers";
 import { uid } from 'uid';
 
@@ -102,6 +104,70 @@ export default {
     return docToResource(savedThread);
   },
 
+  async signInWithGoogle({ dispatch }) {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      'login_hint': 'petergriffin@example.com'
+    });
+    const auth = getAuth();
+    auth.languageCode = 'pt';
+    // auth.useDeviceLanguage();
+
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // const credential = GoogleAuthProvider.credentialFromResult(result);
+      // const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      const userRef = doc(getFirestore(), "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      if (!userDoc.exists()) {
+        return dispatch('createUser', {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          username: user.email,
+          avatar: user.photoURL
+        });
+      }
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+    }
+
+  },
+  async signOut({ commit }) {
+    await signOut(getAuth());
+    commit('setAuthId', null);
+  },
+
+  async loginWithEmailAndPassword(context, { email, password }) {
+    await signInWithEmailAndPassword(getAuth(), email, password);
+  },
+  async registerUserWithEmailAndPassword({ dispatch }, { email, name, username, password, avatar = null }) {
+    const userCredential = await createUserWithEmailAndPassword(getAuth(), email, password);
+
+    const user = await dispatch('createUser', { id: userCredential.user.uid, email, name, username, avatar });
+
+    return docToResource(user);
+  },
+  async createUser({ commit }, { id, email, name, username, avatar = null }) {
+    const registeredAt = serverTimestamp();
+    const usernameLower = username.toLowerCase();
+    email = email.toLowerCase();
+    const user = { avatar, email, username, usernameLower, name, registeredAt };
+
+    const userRef = doc(getFirestore(), "users", id);
+    await setDoc(userRef, user);
+    const newUser = await getDoc(userRef);
+    commit('setItem', { resource: 'users', item: newUser })
+    return docToResource(newUser);
+  },
+
   updateUser({ commit }, user) {
     commit('setItem', { resource: "users", item: user });
   },
@@ -117,7 +183,19 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id }),
   fetchThreads: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'threads', ids }),
 
-  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId }),
+  fetchAuthUser: ({ commit, dispatch, state }) => {
+    const id = getAuth().currentUser?.uid;
+    if (!id) return;
+    dispatch('fetchItem', {
+      resource: 'users',
+      id,
+      handleUnsubscribe: (unsub) => {
+        commit('setAuthUserUnsubscribe', unsub);
+      }
+    })
+    commit('setAuthId', id);
+  },
+
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id }),
   fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids }),
 
@@ -130,7 +208,7 @@ export default {
   fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id }),
   fetchCategories: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'categories', ids }),
 
-  fetchItem({ commit }, { resource, id }) {
+  fetchItem({ commit }, { resource, id, handleUnsubscribe = null }) {
     console.log('fetching', resource, id);
     // const itemRef = await getDoc(doc(getFirestore(), resource, id));
     // const item = { ...itemRef.data(), id: itemRef.id };
@@ -140,20 +218,34 @@ export default {
 
     return new Promise((resolve) => {
       const unsubscribe = onSnapshot(doc(getFirestore(), resource, id), (doc) => {
-        console.log('snapshot', id);
-        const item = { ...doc.data(), id: doc.id };
+        console.log('snapshot', resource, id);
+        const item = { ...doc.data(), id };
         commit('setItem', { resource, item });
         resolve(item);
       });
-      commit('appendUnsubscribe', { unsubscribe });
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe);
+      } else {
+        commit('appendUnsubscribe', { unsubscribe });
+      }
     })
   },
 
   fetchItems: ({ dispatch }, { resource, ids }) => Promise.all(ids.map(id => dispatch('fetchItem', { resource, id }))),
 
+  authIsReady({ commit }) {
+    commit('setAuthIsReady', true);
+  },
+
   async unsubscribeAllSnapshots({ state, commit }) {
     console.log(`clearing ${state.unsubscribes?.length || 0} snapshot listeners`);
     state.unsubscribes.forEach(unsub => unsub());
     commit('clearAllUnsubscribes')
+  },
+  async unsubscribeAuthUserSnapshot({ state, commit }) {
+    if (state.authUserUnsubscribe) {
+      state.authUserUnsubscribe();
+      commit('setAuthUserUnsubscribe', null);
+    }
   }
 }

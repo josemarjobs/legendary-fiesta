@@ -47,8 +47,12 @@ import PostList from "../components/PostList.vue";
 import { mapGetters } from "vuex";
 import UserProfileCard from "../components/UserProfileCard.vue";
 import UserProfileCardEditor from "../components/UserProfileCardEditor.vue";
+import asyncDataStatus from "../mixin/asyncDataStatus";
+
 export default {
   components: { PostList, UserProfileCard, UserProfileCardEditor },
+  mixins: [asyncDataStatus],
+
   props: {
     edit: {
       type: Boolean,
@@ -57,6 +61,9 @@ export default {
   },
   computed: {
     ...mapGetters({ user: "authUser" }),
+  },
+  created() {
+    this.asyncDataStatus_fetched();
   },
 };
 </script>

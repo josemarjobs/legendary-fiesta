@@ -1,7 +1,7 @@
 <template>
   <div class="shadow-sm rounded-md bg-white p-4">
     <img
-      class="rounded-full mx-auto mb-2 p-8"
+      class="rounded-full mx-auto mb-2 p-8 object-cover object-center w-80 h-80"
       :src="user.avatar"
       :alt="user.name"
     />
