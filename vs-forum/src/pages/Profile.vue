@@ -65,6 +65,13 @@ export default {
   created() {
     this.asyncDataStatus_fetched();
   },
+  // beforeRouteEnter(to, from) {
+  //   console.log("to:", to);
+  //   console.log("from:", from);
+  //   if (!store.state.authId) return { name: "PageHome" };
+  // },
+  beforeRouteUpdate() {},
+  beforeRouteLeave() {},
 };
 </script>
 

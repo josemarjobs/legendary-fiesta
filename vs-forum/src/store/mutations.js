@@ -7,10 +7,6 @@ export default {
   setAuthId(state, authId) {
     state.authId = authId;
   },
-  setAuthIsReady(state, authIsReady) {
-    state.authIsReady = authIsReady;
-  },
-
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
 
   appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threadss' }),

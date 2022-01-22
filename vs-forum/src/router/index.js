@@ -29,10 +29,22 @@ const routes = [
     name: 'Login',
   },
   {
+    path: '/logout',
+    name: 'SignOut',
+    async beforeEnter(to, from) {
+      await store.dispatch('signOut');
+      return { name: 'PageHome' };
+    }
+  },
+  {
     path: '/me',
     component: Profile,
     name: 'Profile',
-    meta: { toTop: true, smoothScroll: true, }
+    meta: { toTop: true, smoothScroll: true, requiresAuth: true },
+    // beforeEnter(to, from) {
+    //   if (!store.state.authId) return { name: "PageHome" };
+    //   // next();
+    // },
   },
   {
     path: '/me/edit',
@@ -115,8 +127,12 @@ const router = createRouter({
   }
 });
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
   store.dispatch('unsubscribeAllSnapshots');
+
+  if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: "PageHome" };
+  }
 })
 
 export default router;

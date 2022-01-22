@@ -63,7 +63,7 @@
         Threads
       </router-link>
     </div>
-    <div class="flex items-center relative" v-if="authUser && authIsReady">
+    <div class="flex items-center relative" v-if="authUser">
       <div
         v-show="menuActive"
         class="
@@ -133,7 +133,7 @@
         </svg>
       </a>
     </div>
-    <div v-if="!authUser && authIsReady">
+    <div v-if="!authUser">
       <router-link
         :to="{ name: 'Login' }"
         class="ml-8 px-4 py-2 bg-emerald-900 rounded-md"
@@ -159,7 +159,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["authUser", "authIsReady"]),
+    ...mapGetters(["authUser"]),
   },
   methods: {
     signOut() {

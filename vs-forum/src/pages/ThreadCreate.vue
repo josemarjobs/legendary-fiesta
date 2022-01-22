@@ -5,7 +5,12 @@
       <span class="italic font-medium">{{ forum.name }}</span>
     </h1>
 
-    <thread-editor @save="save" @cancel="cancel" />
+    <thread-editor
+      @save="save"
+      @cancel="cancel"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
+    />
   </div>
 </template>
 
@@ -21,6 +26,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      formIsDirty: false,
+    };
   },
   computed: {
     forum() {
@@ -46,6 +56,15 @@ export default {
   async created() {
     await this.fetchForum({ id: this.forumId });
     this.asyncDataStatus_fetched();
+  },
+  beforeRouteLeave() {
+    console.log("Form is dirty", this.formIsDirty);
+    if (!this.formIsDirty) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to leave? Unsaved changes will be lost!"
+    );
+    if (!confirmed) return false;
   },
 };
 </script>

@@ -1,9 +1,6 @@
 import { findById } from "../helpers";
 
 export default {
-  authIsReady: (state) => {
-    return state.authIsReady;
-  },
   authUser: (state, getters) => {
     return getters.user(state.authId);
   },

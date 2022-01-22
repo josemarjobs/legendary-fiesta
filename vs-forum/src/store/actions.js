@@ -233,10 +233,6 @@ export default {
 
   fetchItems: ({ dispatch }, { resource, ids }) => Promise.all(ids.map(id => dispatch('fetchItem', { resource, id }))),
 
-  authIsReady({ commit }) {
-    commit('setAuthIsReady', true);
-  },
-
   async unsubscribeAllSnapshots({ state, commit }) {
     console.log(`clearing ${state.unsubscribes?.length || 0} snapshot listeners`);
     state.unsubscribes.forEach(unsub => unsub());

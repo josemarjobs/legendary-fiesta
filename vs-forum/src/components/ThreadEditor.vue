@@ -69,10 +69,23 @@ export default {
   },
   methods: {
     save() {
+      this.$emit("clean");
       this.$emit("save", { ...this.forum });
     },
     cancel() {
       this.$emit("cancel");
+    },
+  },
+  watch: {
+    forum: {
+      deep: true,
+      handler() {
+        if (this.forum.title !== this.title || this.forum.text !== this.text) {
+          this.$emit("dirty");
+        } else {
+          this.$emit("clean");
+        }
+      },
     },
   },
 };
