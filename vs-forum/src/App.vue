@@ -3,7 +3,7 @@
     <the-navbar />
   </div>
   <div class="w-full md:max-w-4xl lg:max-w-5xl mx-auto text-gray-600">
-    <router-view v-show="showPage" @ready="onPageReady" />
+    <router-view v-show="showPage" @ready="onPageReady" :key="$route.path" />
 
     <div class="h-screen flex items-center justify-center" v-show="!showPage">
       <app-spinner />

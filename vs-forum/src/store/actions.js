@@ -1,11 +1,26 @@
-import { serverTimestamp, writeBatch, increment, arrayUnion, updateDoc, setDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { where, query, serverTimestamp, writeBatch, increment, arrayUnion, updateDoc, setDoc, collection, doc, getDoc, getDocs, getFirestore, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import { findById, docToResource } from "../helpers";
 import { uid } from 'uid';
 
 
 export default {
+  initAuthentication({ dispatch, commit, state }) {
+    if (state.authObserverUnsubscribe) state.authObserverUnsubscribe();
+    return new Promise((resolve) => {
+      const unsub = onAuthStateChanged(getAuth(), async (user) => {
+        console.log('auth state changed: ', user);
+        dispatch('unsubscribeAuthUserSnapshot');
+        if (user) {
+          await dispatch('fetchAuthUser')
+        }
+        resolve(user);
+      });
+
+      commit('setAuthObserverUnsubscribe', unsub);
+    })
+  },
   async createPost({ commit, state }, post) {
     post.userId = state.authId;
     post.publishedAt = serverTimestamp();
@@ -168,7 +183,18 @@ export default {
     return docToResource(newUser);
   },
 
-  updateUser({ commit }, user) {
+  async updateUser({ commit, state }, user) {
+    const updates = {
+      avatar: user.avatar || null,
+      username: user.username || null,
+      name: user.name || null,
+      bio: user.bio || null,
+      website: user.website || null,
+      email: user.email || null,
+      location: user.location || null,
+    }
+    const userRef = doc(getFirestore(), "users", state.authId);
+    await updateDoc(userRef, updates);
     commit('setItem', { resource: "users", item: user });
   },
   async fetchAllCategories({ commit }) {
@@ -180,13 +206,18 @@ export default {
       return item;
     });
   },
-  fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id }),
-  fetchThreads: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'threads', ids }),
-
-  fetchAuthUser: ({ commit, dispatch, state }) => {
+  async fetchAuthUsersPosts({ commit, state }) {
+    console.log("fetching auth user's posts")
+    const postsRef = collection(getFirestore(), "posts");
+    const posts = await getDocs(query(postsRef, where('userId', "==", state.authId)));
+    posts.forEach(item => {
+      commit('setItem', { resource: 'posts', item })
+    })
+  },
+  async fetchAuthUser({ commit, dispatch, state }) {
     const id = getAuth().currentUser?.uid;
     if (!id) return;
-    dispatch('fetchItem', {
+    await dispatch('fetchItem', {
       resource: 'users',
       id,
       handleUnsubscribe: (unsub) => {
@@ -195,6 +226,8 @@ export default {
     })
     commit('setAuthId', id);
   },
+  fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id }),
+  fetchThreads: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'threads', ids }),
 
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id }),
   fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids }),
@@ -217,11 +250,14 @@ export default {
     // return item;
 
     return new Promise((resolve) => {
-      const unsubscribe = onSnapshot(doc(getFirestore(), resource, id), (doc) => {
-        console.log('snapshot', resource, id);
-        const item = { ...doc.data(), id };
-        commit('setItem', { resource, item });
-        resolve(item);
+      const unsubscribe = onSnapshot(doc(getFirestore(), resource, id), (result) => {
+        if (result.exists && result.data()) {
+          // console.log('snapshot', resource, id, result.data());
+          const item = { ...result.data(), id };
+          commit('setItem', { resource, item });
+          resolve(item);
+        }
+        else { resolve(null); }
       });
       if (handleUnsubscribe) {
         handleUnsubscribe(unsubscribe);

@@ -62,7 +62,8 @@ export default {
   computed: {
     ...mapGetters({ user: "authUser" }),
   },
-  created() {
+  async created() {
+    await this.$store.dispatch("fetchAuthUsersPosts");
     this.asyncDataStatus_fetched();
   },
   // beforeRouteEnter(to, from) {

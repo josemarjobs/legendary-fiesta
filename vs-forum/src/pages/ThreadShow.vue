@@ -3,6 +3,7 @@
     <h1 class="text-3xl font-bold mt-10 mb-1">
       {{ thread.title }}
       <router-link
+        v-if="thread.userId === authUser?.id"
         class="
           text-sm
           px-4
@@ -12,8 +13,9 @@
           hover:text-emerald-700
         "
         :to="{ name: 'ThreadEdit', params: { id: thread.id } }"
-        >Edit</router-link
       >
+        Edit
+      </router-link>
     </h1>
     <div class="flex justify-between items-end mb-6">
       <div>
@@ -30,12 +32,28 @@
     </div>
     <post-list :posts="threadPosts" />
 
-    <post-editor @save="addPost" />
+    <post-editor v-if="authUser" @save="addPost" />
+    <div v-else class="text-center p-8 text-xl">
+      <router-link
+        class="text-emerald-500 hover:text-emerald-400"
+        :to="{ name: 'Login', query: { redirectTo: $route.path } }"
+      >
+        Sign in
+      </router-link>
+      or
+      <router-link
+        class="text-emerald-500 hover:text-emerald-400"
+        :to="{ name: 'Register', query: { redirectTo: $route.path } }"
+      >
+        Register
+      </router-link>
+      to reply
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import AppDate from "../components/AppDate.vue";
 import PostEditor from "../components/PostEditor.vue";
 import PostList from "../components/PostList.vue";
@@ -56,6 +74,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["authUser"]),
     threads() {
       return this.$store.state.threads;
     },
